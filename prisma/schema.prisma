@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum StatusType {
+  OPEN 
+  ASSIGNED
+  CLOSED
+}
+
+
+model Ticket {
+  id                  String @id @default(cuid()) // Ticket number
+  status              StatusType @default(OPEN)   //open, assigned, closed
+  orderNumber         String                      // numero commessa
+  company             String                      // nome commessa
+  companyTechnician   String?                     // tecnico di riferimento
+  email               String?                     // email del tecnico di riferimento
+  telephone           String?                     // numero di telefono del tecnico di riferimento
+  problemDescription  String?                     // descrizione del problema
+  openDate            DateTime @default(now())    // quando è stato aperto il ticket
+  
+  assignedDate        DateTime?                   // quando è stato assegnato
+  assignedToId        String?                     // assegnato a (tecnicianId - clerkId) 
+  
+  closingDate         DateTime?                   // quando è stato chiuso
+  closingDescription  String?                     // rapportino
+  
+  requiresPayment     Boolean @default(false)     // a pagamento
+  wbs                 String?                     // se pagamento = true possibile mettere wbs
+  
+  isPlcChanged        Boolean @default(false)     // true se software plc è stato modificato
+  newPlcFileName      String?                     // se plc modifica indicare nuovo nome file creato
+  
+  isSafetyChanged     Boolean @default(false)     // è stata modifica la safety
+  safetyDescription   String?                     // note modifica plc di sicurezza
+  oldSafetyId         String?                     // vecchio id sicurezza plc prima della modifica
+  newSafetyId         String?                     // nuovo id sicurezza del plc dopo modifica
+}
