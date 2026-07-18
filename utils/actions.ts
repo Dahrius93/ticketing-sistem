@@ -1,6 +1,9 @@
 import { currentUser, clerkClient } from "@clerk/nextjs/server";
 import db from "@/utils/db";
 import { redirect } from "next/navigation";
+import { ticketSchema, validateWithZodSchema } from "./schemas";
+import { ZodType } from "zod";
+import { revalidatePath } from "next/cache";
 
 // generic error to display in a toast
 const renderError = (error: unknown): { message: string } => {
@@ -29,7 +32,25 @@ export const getAdminUser = async () => {
 };
 
 // crete a new ticket
-export const newTicketAction = async () => {};
+export const newTicketAction = async (
+  prevState: unknown,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validateFields = validateWithZodSchema(ticketSchema, rawData);
+
+    await db.ticket.create({
+      data: {
+        ...validateFields,
+      },
+    });
+    revalidatePath("/");
+    return { message: "Ticket creato" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
 
 // fetch all tickets
 export const fetchTicketsAction = async () => {};
