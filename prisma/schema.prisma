@@ -29,7 +29,8 @@ model Ticket {
   telephone           String?                     // numero di telefono del tecnico di riferimento
   problemDescription  String?                     // descrizione del problema
   openDate            DateTime @default(now())    // quando è stato aperto il ticket
-  
+  openedById          String                      // clerkid dell'utente che ha aperto il ticket
+
   assignedDate        DateTime?                   // quando è stato assegnato
   assignedToId        String?                     // assegnato a (tecnicianId - clerkId) 
   
